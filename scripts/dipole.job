@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#SBATCH --nodes=30
+#SBATCH --time=01:00:00
+#SBATCH --partition=shas
+#SBATCH --ntasks=720
+#SBATCH --job-name=grid
+#SBATCH --output=grid_%j
+
+
+#module load mpi/openmpi-x86_64
+
+
+GRIDIR=/Users/$USER/mipas/github_clone/grid-generation
+RUNDIR=$GRIDIR/run/dipole
+mkdir -p $RUNDIR
+
+cd $RUNDIR
+
+/bin/cp -f $GRIDIR/dipole/igrf13coeffs.txt        ./
+/bin/cp -f $GRIDIR/dipole/dipole_coordinates.exe ./grid.exe
+
+
+cat > grid_params.namelist << EOF
+&grid_params
+epoch   = 2000.0,
+nptx    = 101,
+nlp     = 45,
+nmp     = 1,
+theta1  = 45.0,
+theta2  = 82.0,
+hmin    = 90.0,
+ds_step = 5.0,
+use_psi = 0,
+aa      = 3.0,
+use_dipole  = 1,
+/
+EOF
+
+
+./grid.exe >&grid.output&
+
+
