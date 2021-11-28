@@ -62,8 +62,20 @@ f = FortranFile('../run/igrf/general/fort.20', 'r')
 
 print (nlp,nmp,npts)
 
+
 # skip: could get klm, lpts here
-f.read_ints(np.int32)
+#f.read_ints(np.int32)
+
+klm  = np.zeros((nlp,nmp), dtype=np.int32)
+lpts = np.zeros((npts,nmp), dtype=np.int32)
+x = f.read_ints(np.int32)
+
+klm [:,0] = x[0:nlp]
+lpts[:,0] = x[nlp:nlp+npts]
+
+#print (' klm  = ', klm)
+#print (' lpts = ', lpts)
+
 
 # read in again
 r = []; theta = []; b = []; s = []
@@ -124,6 +136,10 @@ ang23 = np.array(stacked)
 stacked, idx = stack_ragged(ratio)
 ratio = np.array(stacked)
 
+
+#idx = np.array(idx)
+
+#print (' idx = ', np.shape(idx), idx)
 
 # plot basis angles
 
@@ -187,7 +203,7 @@ cbar = add_colorbar(im)
 
 
 # plot grid points too
-plt.scatter(x, y, s=0.3)
+#plt.scatter(x, y, s=0.3)
 
 
 # plot apex points too?
@@ -235,6 +251,20 @@ x2 = (6371.2+90)*np.sin(thetaxx)
 y2 = (6371.2+90)*np.cos(thetaxx)
 
 #plt.plot(x2, y2)
+
+
+
+
+#for l in range(0, nlp-2, 45):
+#for l in range(16, nlp-2, 6):
+for l in [12, 22, 28, 32, 36, 40]:
+    rx = r[idx[l]:idx[l+1]]
+    thetax = theta[idx[l]:idx[l+1]]
+    xx = rx * np.sin(thetax)
+    yy = rx * np.cos(thetax)
+    plt.plot(xx, yy)
+
+#print (r[0:idx[0]])
 
 
 fig.savefig("euler_ratio.png", dpi=150, bbox_inches='tight')

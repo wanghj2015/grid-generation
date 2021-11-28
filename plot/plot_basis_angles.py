@@ -172,9 +172,9 @@ ang13 = ang13 - 90
 ang23 = ang23 - 90
 
 
-print (' beta12 = ', min(ang12), max(ang12))
-print (' beta13 = ', min(ang13), max(ang13))
-print (' beta23 = ', min(ang23), max(ang23))
+print (' beta12 = ', '{:.4e}'.format(min(ang12)), '{:.4e}'.format(max(ang12)))
+print (' beta13 = ', '{:.4e}'.format(min(ang13)), '{:.4e}'.format(max(ang13)))
+print (' beta23 = ', '{:.4f}'.format(min(ang23)), '{:.4f}'.format(max(ang23)))
 
 
 minval = min(ang12)
