@@ -156,6 +156,9 @@ r_apx(l,m)   = 1.0d0/chi_apx(l)
 !print *, ' r_apx = ', r_apx - a
 
 phi_apx(l,m) = (m-1) * (2.0d0*pi/nmp)
+!phi_apx(l,m) = pi * 0.5d0
+!phi_apx(l,m) = pi
+!phi_apx(l,m) = pi * 1.5d0
 
 
 ! initial guess for co-latitude
@@ -396,7 +399,8 @@ do i = 1, nmp
 do j = 1, nlp
 !do k = 1, nptz
 do k = 1, nptw(i)
-phi_m(k,j,i) = (i-1) * (2.0d0*pi/nmp)
+!phi_m(k,j,i) = (i-1) * (2.0d0*pi/nmp)
+phi_m(k,j,i) = phi_apx(j,i)
 enddo
 enddo
 enddo
