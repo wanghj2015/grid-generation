@@ -234,9 +234,12 @@ real(wp) :: Brx, Btx, Bpx, Bx, Vx, dBrdt
 
 real(wp) :: aa, bb, ss, eps, fval
 
-integer :: npts, nstep, nx
+integer :: npts, nstep, nx, nm, np
 
 integer :: i, n, icount, istat
+
+logical :: bracket
+
 
 npts = size(Vm)
 
@@ -300,8 +303,8 @@ do n = 2, nstep
 
    !if (rx(n) < a) then
    ! need to cover a little more range
-   !if (rx(n) < a - hmin) then
-    if (rx(n) < a - 1   ) then
+    if (rx(n) < a - hmin) then
+   !if (rx(n) < a - 1   ) then
       nx = n
       exit
    else
@@ -324,7 +327,9 @@ r(1)     = r0
 theta(1) = theta0
 phi(1)   = phi0
 
+
 eps = epsilon(eps)
+
 
 aa = 0.0d0
 !bb = ds
@@ -338,20 +343,52 @@ do i = 2, npts
 
 !print *, ' i, Vm = ', i, Vm(i)
 
+
 ! bracket Vm(i)
+
+bracket = .False.
+
 do n = 2, nx
-   if ((sgn < 0.d0 .and. Vmx(n-1) <= Vm(i) .and. Vm(i) <= Vmx(n)) .or. &
-       (sgn > 0.d0 .and. Vmx(n-1) >= Vm(i) .and. Vm(i) >= Vmx(n))) then
-      r1     = rx(n-1)
-      theta1 = thetax(n-1)
-      phi1   = phix(n-1)
 
-      !print *, ' Vm-, Vm, Vm+: ', Vmx(n-1), Vm(i), Vmx(n)
-      !print *, ' r1, theta1, phi1 = ', r1, theta1/dtr, phi1/dtr
+if ((sgn < 0.d0 .and. Vmx(n-1) <= Vm(i) .and. Vm(i) <= Vmx(n)) .or. &
+    (sgn > 0.d0 .and. Vmx(n-1) >= Vm(i) .and. Vm(i) >= Vmx(n))) then
 
-      exit
-   endif
+   nm = n - 1
+   np = n
+
+   r1     = rx(nm)
+   theta1 = thetax(nm)
+   phi1   = phix(nm)
+
+   !print *, ' Vm-, Vm, Vm+: ', Vmx(n-1), Vm(i), Vmx(n)
+   !print *, ' r1, theta1, phi1 = ', r1, theta1/dtr, phi1/dtr
+
+   bracket = .True.
+
+   exit
+
+endif
+
 enddo
+
+
+!if (.not. bracket) cycle
+if (.not. bracket) exit
+
+
+!if (abs(Vm(i) - Vmx(nm)) <= epsilon(Vm(i))) then
+!   r(i)     = rx(nm)
+!   theta(i) = thetax(nm)
+!   phi(i)   = phix(nm)
+!   cycle
+!else if (abs(Vm(i) - Vmx(np)) <= epsilon(Vm(i))) then
+!   r(i)     = rx(np)
+!   theta(i) = thetax(np)
+!   phi(i)   = phix(np)
+!   cycle
+!endif
+
+
 
 r2     = r1
 theta2 = theta1
@@ -373,6 +410,9 @@ do
    if ( istat < 0 ) then
       write ( *, '(a)' ) ' '
       write ( *, '(a)' ) '  ZERO_RC returned an error flag!'
+
+     !print *, ' Vx, Vm(i), Vmx(nm), Vmx(np) = ', Vx, Vm(i), Vmx(nm), Vmx(np)
+
       exit
    endif
 
@@ -477,10 +517,9 @@ enddo
 
 do n = 1, npts
 
-dr = 1.0d0
-!dr = 1.0d-2
-!dr = 1.0d-3
-
+!dr = 1.0d0
+ dr = 2.0d1
+ dr = 1.0d1
 call find_apex (r(n)+dr, theta(n), phi(n), s, ds, r1, theta1, phi1)
 call find_apex (r(n)-dr, theta(n), phi(n), s, ds, r2, theta2, phi2)
 
@@ -496,9 +535,8 @@ ct_phi(1,n) = (phip - phim) / (2.0d0*dr)
 
 !print *, ' n, ct_phi(1) = ', n, ct_phi(1,n)
 
- dtheta = 0.25d0*pi/180.0d0
-!dtheta = 0.01d0*pi/180.0d0
-
+dtheta = 0.25d0*pi/180.0d0
+dtheta = 0.1250*pi/180.0d0
 call find_apex (r(n), theta(n)+dtheta, phi(n), s, ds, r1, theta1, phi1)
 call find_apex (r(n), theta(n)-dtheta, phi(n), s, ds, r2, theta2, phi2)
 
@@ -514,9 +552,8 @@ ct_phi(2,n) = (phip - phim) / (2.0d0*dtheta*r(n))
 
 !print *, ' n, ct_phi(2) = ', n, ct_phi(2,n)
 
- dphi = 0.25d0*pi/180.0d0
-!dphi = 0.01d0*pi/180.0d0
-
+dphi = 0.25d0*pi/180.0d0
+dphi = 0.1250*pi/180.0d0
 call find_apex (r(n), theta(n), phi(n)+dphi, s, ds, r1, theta1, phi1)
 call find_apex (r(n), theta(n), phi(n)-dphi, s, ds, r2, theta2, phi2)
 
