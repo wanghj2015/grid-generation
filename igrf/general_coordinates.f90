@@ -253,14 +253,12 @@ else
    g10 = gx(1,0)
    gm  = abs(a*g10)
 
-  !aa = 100.0d0
-  !aa = 10.0d0
-  !aa = 5.0d0
-   aa = 3.0d0
 
    ab = log(aa + sqrt(1.0d0 + aa**2))
 
-   mu1 = Vm_n/gm; mu2 = Vm_s/gm
+  !mu1 = Vm_n/gm; mu2 = Vm_s/gm
+   mu1 = (Vm_n - Vm_apx(1,m))/gm
+   mu2 = (Vm_s - Vm_apx(1,m))/gm
 
    psi1 = log(aa*mu1 + sqrt(1.0d0 + (aa*mu1)**2))/ab
    psi2 = log(aa*mu2 + sqrt(1.0d0 + (aa*mu2)**2))/ab
@@ -273,7 +271,10 @@ else
 
    dpsix(m) = dpsi
 
-   mu1 = Vm_n/gm; mu2 = Vm_apx(1,m)/gm
+  !mu1 = Vm_n/gm; mu2 = Vm_apx(1,m)/gm
+   mu1 = (Vm_n - Vm_apx(1,m))/gm
+  !mu2 = (Vm_apx(1,m) - Vm_apx(1,m))/gm
+   mu2 = 0.0d0
 
    psi1 = log(aa*mu1 + sqrt(1.0d0 + (aa*mu1)**2))/ab
    psi2 = log(aa*mu2 + sqrt(1.0d0 + (aa*mu2)**2))/ab
@@ -282,7 +283,10 @@ else
 
    nn = ceiling((psi2-psi1)/dpsi + 1.0d-20)
 
-   mu1 = Vm_s/gm; mu2 = Vm_apx(1,m)/gm
+  !mu1 = Vm_s/gm; mu2 = Vm_apx(1,m)/gm
+   mu1 = (Vm_s - Vm_apx(1,m))/gm 
+  !mu2 = (Vm_apx(1,m) - Vm_apx(1,m))/gm
+   mu2 = 0.0d0
 
    psi1 = log(aa*mu1 + sqrt(1.0d0 + (aa*mu1)**2))/ab
    psi2 = log(aa*mu2 + sqrt(1.0d0 + (aa*mu2)**2))/ab
@@ -337,6 +341,7 @@ if (use_psi == 0) then
 
   !print *, ' mu = ', mu_m(midpoint,:,1)
   !print *, ' mu = ', mu_m(:,1,1) / gm
+  !print *, ' mu = ', mu_m(:,1,1)
 
 
 else
@@ -347,10 +352,14 @@ else
    midpoint = (nptw(i)+1)/2
    dpsi = dpsix(i)
    do j = 1, nlp
+
    ! at apex
-   mu2 = Vm_apx(j,i)/gm
+  !mu2 = Vm_apx(j,i)/gm
+   mu2 = 0.0d0
+
    psi2 = log(aa*mu2 + sqrt(1.0d0 + (aa*mu2)**2))/ab
    psi_m(midpoint,j,i) = psi2
+
    do k = midpoint-1, 1, -1
    psi_m(k,j,i) = psi_m(k+1,j,i) - dpsi
    enddo
@@ -365,14 +374,18 @@ else
    do j = 1, nlp
    do k = 1, nptw(i)
    mu_m(k,j,i) = sinh(ab*psi_m(k,j,i))/aa
+
+   ! get the potential at the grid points,
+   ! which is used in the following computation
+   mu_m(k,j,i) = mu_m(k,j,i) * gm + Vm_apx(j,i)
    enddo
    enddo
    enddo
 
-   mu_m = mu_m * gm
+  !mu_m = mu_m * gm
 
   !print *, ' mu = ', mu_m(midpoint,:,1)
-  !print *, ' mu = ', mu_m(:,4,1)
+  !print *, ' mu = ', mu_m(:,1,1)
 
 endif
 
