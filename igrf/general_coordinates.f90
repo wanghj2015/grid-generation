@@ -155,7 +155,7 @@ r_apx(l,m)   = 1.0d0/chi_apx(l)
 
 !print *, ' r_apx = ', r_apx - a
 
-phi_apx(l,m) = (m-1) * (2.0d0*pi/nmp)
+ phi_apx(l,m) = (m-1) * (2.0d0*pi/nmp)
 !phi_apx(l,m) = pi * 0.5d0
 !phi_apx(l,m) = pi
 !phi_apx(l,m) = pi * 1.5d0

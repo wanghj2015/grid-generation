@@ -518,8 +518,8 @@ enddo
 do n = 1, npts
 
 !dr = 1.0d0
- dr = 2.0d1
  dr = 1.0d1
+ dr = 2.0d1
 call find_apex (r(n)+dr, theta(n), phi(n), s, ds, r1, theta1, phi1)
 call find_apex (r(n)-dr, theta(n), phi(n), s, ds, r2, theta2, phi2)
 
@@ -535,8 +535,8 @@ ct_phi(1,n) = (phip - phim) / (2.0d0*dr)
 
 !print *, ' n, ct_phi(1) = ', n, ct_phi(1,n)
 
-dtheta = 0.25d0*pi/180.0d0
 dtheta = 0.1250*pi/180.0d0
+dtheta = 0.25d0*pi/180.0d0
 call find_apex (r(n), theta(n)+dtheta, phi(n), s, ds, r1, theta1, phi1)
 call find_apex (r(n), theta(n)-dtheta, phi(n), s, ds, r2, theta2, phi2)
 
@@ -552,8 +552,8 @@ ct_phi(2,n) = (phip - phim) / (2.0d0*dtheta*r(n))
 
 !print *, ' n, ct_phi(2) = ', n, ct_phi(2,n)
 
-dphi = 0.25d0*pi/180.0d0
 dphi = 0.1250*pi/180.0d0
+dphi = 0.25d0*pi/180.0d0
 call find_apex (r(n), theta(n), phi(n)+dphi, s, ds, r1, theta1, phi1)
 call find_apex (r(n), theta(n), phi(n)-dphi, s, ds, r2, theta2, phi2)
 
