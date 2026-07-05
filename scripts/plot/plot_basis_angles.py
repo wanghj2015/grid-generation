@@ -14,8 +14,25 @@ import matplotlib.ticker
 
 from scipy.io import FortranFile
 
+import os
 import sys
+import argparse
+
 np.set_printoptions(threshold=sys.maxsize)
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.dirname(os.path.dirname(_HERE))
+
+parser = argparse.ArgumentParser(
+    description="Plot coordinate basis-vector angles from a run's "
+                "fort.20 / fort.25 output.")
+parser.add_argument(
+    "run_dir", nargs="?",
+    default=os.path.join(_REPO, "run", "igrf", "full"),
+    help="run directory containing the fort.* output files "
+         "(default: %(default)s)")
+args = parser.parse_args()
+run_dir = args.run_dir
 
 
 # ragged array:
@@ -60,7 +77,7 @@ def add_colorbar(im, aspect=15, pad_fraction=0.5, **kwargs):
 
 # read in 'general coordinates' (gc) basis vectors
 
-f = FortranFile('../run/igrf/general/fort.20', 'r')
+f = FortranFile(os.path.join(run_dir, 'fort.20'), 'r')
 
 [nlp,nmp,npts] = f.read_ints(np.int32)
 
@@ -100,7 +117,7 @@ theta = np.array(stacked)
 #y = (r-0)*np.cos(theta)
 
 
-f = FortranFile('../run/igrf/general/fort.25', 'r')
+f = FortranFile(os.path.join(run_dir, 'fort.25'), 'r')
 
 ang12 = []; ang13 = []; ang23  = []; ratio = []
 for m in range(0, nmp):
@@ -352,7 +369,10 @@ ax[2].text(0.90, 0.96, 'c', transform=ax[2].transAxes, fontsize=12, va='top')
 
 
 #fig.savefig("basis_angles.png", dpi=150, bbox_inches='tight')
-fig.savefig("basis_angles.png", dpi=fig.dpi, bbox_inches='tight')
+_out = os.path.join(_REPO, "run", "plots", "basis_angles.png")
+os.makedirs(os.path.dirname(_out), exist_ok=True)
+fig.savefig(_out, dpi=fig.dpi, bbox_inches='tight')
+print("saved", _out)
 
 
 plt.show()

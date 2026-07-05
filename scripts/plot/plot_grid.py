@@ -3,8 +3,24 @@ import matplotlib.pyplot as plt
 
 from scipy.io import FortranFile
 
+import os
 import sys
+import argparse
+
 np.set_printoptions(threshold=sys.maxsize)
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.dirname(os.path.dirname(_HERE))
+
+parser = argparse.ArgumentParser(
+    description="Plot the field-line grid geometry from a run's fort.20 output.")
+parser.add_argument(
+    "run_dir", nargs="?",
+    default=os.path.join(_REPO, "run", "igrf", "full"),
+    help="run directory containing the fort.* output files "
+         "(default: %(default)s)")
+args = parser.parse_args()
+run_dir = args.run_dir
 
 
 
@@ -35,9 +51,9 @@ def load_stacked_arrays(fname, axis=0):
 
 # read in grid
 
-f = FortranFile('../run/igrf/general/fort.20', 'r')
+f = FortranFile(os.path.join(run_dir, 'fort.20'), 'r')
 
-f = FortranFile('../run/igrf/general/fort.20', 'r')
+f = FortranFile(os.path.join(run_dir, 'fort.20'), 'r')
 
 [nlp,nmp,npts] = f.read_ints(np.int32)
 
@@ -142,7 +158,10 @@ plt.ticklabel_format(style='sci', axis='both', scilimits=(0,0))
 #ax.grid()
 
 
-fig.savefig("grid.png")
+_out = os.path.join(_REPO, "run", "plots", "grid.png")
+os.makedirs(os.path.dirname(_out), exist_ok=True)
+fig.savefig(_out)
+print("saved", _out)
 
 
 plt.show()

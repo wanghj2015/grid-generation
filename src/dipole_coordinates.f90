@@ -83,7 +83,9 @@ midpoint=(nptx+1)/2
 
 
 ! get the IGRF coefficients for the epoch
-call get_igrf_coef (epoch)
+! (shared mod_igrf: use_dipole=1 reduces the field to a pure centered dipole;
+!  this program only uses gx(1,0) as the dipole moment, so either setting works)
+call get_igrf_coef (epoch, use_dipole)
 
 ! dipole moment for the corresponding epoch
 gm = abs(gx(1,0))

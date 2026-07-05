@@ -3,13 +3,34 @@ import matplotlib.pyplot as plt
 
 from scipy.io import FortranFile
 
+import os
 import sys
+import argparse
+
 np.set_printoptions(threshold=sys.maxsize)
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REPO = os.path.dirname(os.path.dirname(_HERE))
+
+parser = argparse.ArgumentParser(
+    description="Compare metric terms between the analytical dipole and the "
+                "numerical IGRF-dipole runs (relative errors).")
+parser.add_argument(
+    "dipole_dir", nargs="?",
+    default=os.path.join(_REPO, "run", "dipole"),
+    help="analytical dipole run directory (default: %(default)s)")
+parser.add_argument(
+    "igrf_dipole_dir", nargs="?",
+    default=os.path.join(_REPO, "run", "igrf", "dipole"),
+    help="numerical IGRF-dipole run directory (default: %(default)s)")
+args = parser.parse_args()
+dipole_dir = args.dipole_dir
+igrf_dipole_dir = args.igrf_dipole_dir
 
 
 # read in 'ell'
 
-f = FortranFile('../run/dipole/fort.51', 'r')
+f = FortranFile(os.path.join(dipole_dir, 'fort.51'), 'r')
 
 ell = f.read_reals(dtype=np.float64)
 
@@ -20,7 +41,7 @@ f.close()
 
 # read in 'dipole' (dp) metric
 
-f = FortranFile('../run/dipole/fort.20', 'r')
+f = FortranFile(os.path.join(dipole_dir, 'fort.20'), 'r')
 
 [nlp,nmp,npts] = f.read_ints(np.int32)
 
@@ -58,7 +79,7 @@ s_dp = s[0]
 ell_dp = np.array(s1)
 
 
-f = FortranFile('../run/dipole/fort.21', 'r')
+f = FortranFile(os.path.join(dipole_dir, 'fort.21'), 'r')
 
 h1 = []; h2 = []; h3 = []
 for m in range(0, nmp):
@@ -81,7 +102,7 @@ h3_dp = h3[0]
 
 # read in 'general coordinates' (gc) metric
 
-f = FortranFile('../run/igrf/dipole/fort.20', 'r')
+f = FortranFile(os.path.join(igrf_dipole_dir, 'fort.20'), 'r')
 
 [nlp,nmp,npts] = f.read_ints(np.int32)
 
@@ -121,7 +142,7 @@ s_gc = s[0]
 ell_gc = np.array(s1)
 
 
-f = FortranFile('../run/igrf/dipole/fort.21', 'r')
+f = FortranFile(os.path.join(igrf_dipole_dir, 'fort.21'), 'r')
 
 h1 = []; h2 = []; h3 = []
 for m in range(0, nmp):
@@ -307,7 +328,10 @@ ax[5].ticklabel_format(style='sci', axis='y', scilimits=(0,0))#, useMathText=Tru
 
 
 
-fig.savefig("relative_errors.png")
+_out = os.path.join(_REPO, "run", "plots", "relative_errors.png")
+os.makedirs(os.path.dirname(_out), exist_ok=True)
+fig.savefig(_out)
+print("saved", _out)
 plt.show()
 
 
