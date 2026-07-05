@@ -20,7 +20,7 @@ This code accompanies:
 > **A general curvilinear magnetic field-line-following coordinate system for ionosphere-plasmasphere modeling**
 > Houjun Wang - wanghoujun@gmail.com
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5768675.svg)](https://doi.org/10.5281/zenodo.5768675)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5768674.svg)](https://doi.org/10.5281/zenodo.5768674)
 
 ## Repository layout
 

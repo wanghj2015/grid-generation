@@ -1,0 +1,29 @@
+{
+  "title": "Grid Generation for Curvilinear Field-Line-Following Coordinates",
+  "description": "Fortran code for generating curvilinear magnetic field-line-following coordinate systems for ionosphere-plasmasphere modeling. It builds an analytical axis-centered dipole coordinate generator and a general generator that traces field lines through the IGRF geomagnetic field.",
+  "upload_type": "software",
+  "license": "MIT",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "Wang, Houjun",
+      "orcid": "0000-0002-1462-5234"
+    }
+  ],
+  "keywords": [
+    "ionosphere",
+    "plasmasphere",
+    "geomagnetic field",
+    "IGRF",
+    "field-line-following coordinates",
+    "curvilinear coordinates",
+    "dipole"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/wanghj2015/grid-generation",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
